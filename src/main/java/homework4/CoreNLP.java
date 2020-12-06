@@ -12,8 +12,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Properties;
+import java.util.Set;
 import lombok.SneakyThrows;
 import opennlp.tools.lemmatizer.DictionaryLemmatizer;
 import opennlp.tools.postag.POSModel;
@@ -28,24 +30,23 @@ public class CoreNLP
     public static void main(String... args)
     {
 
-        var text = "src/main/resources/texts/doyle_-_the_hound_of_the_baskervilles.txt";
+        //var text = "src/main/resources/texts/doyle.txt";
+        //var text = "src/main/resources/texts/twain.txt";
+        var text = "src/main/resources/texts/wilde.txt";
         var data = FileUtils.readFileToString(new File(text), StandardCharsets.UTF_8);
 
 
         var coreNlp = coreNLP(data);
+        var corenlpset = new HashSet<>(coreNlp);
         System.out.println("-------core nlp---------");
-        //System.out.println(coreNlp);
-        System.out.println("Size: " + coreNlp.size());
-        System.out.println("-------core nlp---------");
+        System.out.println("Size: " + corenlpset.size() + " / " + coreNlp.size());
 
         var openNlp = openNLP(data);
-
+        var opennlpset = new HashSet<>(openNlp);
 
 
         System.out.println("-------open nlp---------");
-        //System.out.println(openNlp);
-        System.out.println("Size: " + openNlp.size());
-        System.out.println("-------open nlp---------");
+        System.out.println("Size: " + opennlpset.size() + " / " + openNlp.size());
 
 
     }
