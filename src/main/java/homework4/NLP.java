@@ -8,14 +8,11 @@ package homework4;
 
 import edu.stanford.nlp.simple.Sentence;
 import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Properties;
-import java.util.Set;
 import lombok.SneakyThrows;
 import opennlp.tools.lemmatizer.DictionaryLemmatizer;
 import opennlp.tools.postag.POSModel;
@@ -23,18 +20,20 @@ import opennlp.tools.postag.POSTaggerME;
 import opennlp.tools.tokenize.SimpleTokenizer;
 import org.apache.commons.io.FileUtils;
 
-public class CoreNLP
+public class NLP
 {
 
     @SneakyThrows
     public static void main(String... args)
     {
-
+        if(args.length == 0){
+            throw new IllegalArgumentException("Pass the textfile you want to lemmatize as a parameter");
+        }
         //var text = "src/main/resources/texts/doyle.txt";
         //var text = "src/main/resources/texts/twain.txt";
-        var text = "src/main/resources/texts/wilde.txt";
+        //var text = "src/main/resources/texts/wilde.txt";
+        var text = args[0];
         var data = FileUtils.readFileToString(new File(text), StandardCharsets.UTF_8);
-
 
         var coreNlp = coreNLP(data);
         var corenlpset = new HashSet<>(coreNlp);
@@ -44,17 +43,14 @@ public class CoreNLP
         var openNlp = openNLP(data);
         var opennlpset = new HashSet<>(openNlp);
 
-
         System.out.println("-------open nlp---------");
         System.out.println("Size: " + opennlpset.size() + " / " + openNlp.size());
 
-
     }
 
-
-
     @SneakyThrows
-    private static List<String> coreNLP(String data){
+    private static List<String> coreNLP(String data)
+    {
         var props = new Properties();
         props.put("annotators", "tokenize, ssplit, pos, lemma");
 
@@ -65,7 +61,8 @@ public class CoreNLP
     }
 
     @SneakyThrows
-    private static List<String> openNLP(String data){
+    private static List<String> openNLP(String data)
+    {
 
         var tokenizer = SimpleTokenizer.INSTANCE;
         var tokens = tokenizer.tokenize(data);
@@ -73,8 +70,7 @@ public class CoreNLP
         var posModel = new POSModel(new File("src/main/resources/models/en-pos-maxent.bin"));
         var posTagger = new POSTaggerME(posModel);
         var tags = posTagger.tag(tokens);
-        var lemmatizer = new DictionaryLemmatizer(
-                new File("src/main/resources/models/en-lemmatizer.dict"));
+        var lemmatizer = new DictionaryLemmatizer(new File("src/main/resources/models/en-lemmatizer.dict"));
         var lemmas = lemmatizer.lemmatize(tokens, tags);
 
         return Arrays.asList(lemmas);
