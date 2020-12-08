@@ -9,7 +9,9 @@ package homework4;
 import edu.stanford.nlp.simple.Sentence;
 import java.io.File;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Properties;
@@ -29,22 +31,32 @@ public class NLP
         if(args.length == 0){
             throw new IllegalArgumentException("Pass the textfile you want to lemmatize as a parameter");
         }
-        //var text = "src/main/resources/texts/doyle.txt";
-        //var text = "src/main/resources/texts/twain.txt";
-        //var text = "src/main/resources/texts/wilde.txt";
         var text = args[0];
         var data = FileUtils.readFileToString(new File(text), StandardCharsets.UTF_8);
 
-        var coreNlp = coreNLP(data);
+        var coreNlp = new ArrayList<>(coreNLP(data));
         var corenlpset = new HashSet<>(coreNlp);
         System.out.println("-------core nlp---------");
-        System.out.println("Size: " + corenlpset.size() + " / " + coreNlp.size());
+        System.out.println("Without duplicates: " + corenlpset.size() + " /with duplicates " + coreNlp.size());
 
         var openNlp = openNLP(data);
         var opennlpset = new HashSet<>(openNlp);
 
         System.out.println("-------open nlp---------");
-        System.out.println("Size: " + opennlpset.size() + " / " + openNlp.size());
+        System.out.println("Without duplicates: " + opennlpset.size() + " /with duplicates " + openNlp.size());
+
+        var copy1 = new ArrayList<>(corenlpset);
+        var copy2 = new ArrayList<>(opennlpset);
+        var copy3 = new ArrayList<>(corenlpset);
+        var copy4 = new ArrayList<>(opennlpset);
+        System.out.println("Elements that are in coreNLP but not in openNLP");
+        copy1.removeAll(copy2);
+        Collections.sort(copy1);
+        System.out.println(copy1);
+        System.out.println("Elements that are in openNlp but not in coreNLP");
+        copy4.removeAll(copy3);
+        Collections.sort(copy4);
+        System.out.println(copy4);
 
     }
 
