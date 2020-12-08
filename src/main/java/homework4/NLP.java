@@ -37,13 +37,13 @@ public class NLP
         var coreNlp = new ArrayList<>(coreNLP(data));
         var corenlpset = new HashSet<>(coreNlp);
         System.out.println("-------core nlp---------");
-        System.out.println("Without duplicates: " + corenlpset.size() + " /with duplicates " + coreNlp.size());
+        System.out.println("Without duplicates: " + corenlpset.size() + " / with duplicates " + coreNlp.size());
 
         var openNlp = openNLP(data);
         var opennlpset = new HashSet<>(openNlp);
 
         System.out.println("-------open nlp---------");
-        System.out.println("Without duplicates: " + opennlpset.size() + " /with duplicates " + openNlp.size());
+        System.out.println("Without duplicates: " + opennlpset.size() + " / with duplicates " + openNlp.size());
 
         var copy1 = new ArrayList<>(corenlpset);
         var copy2 = new ArrayList<>(opennlpset);
