@@ -11,16 +11,15 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.concurrent.ConcurrentLinkedQueue;
-import java.util.concurrent.CountDownLatch;
+import java.util.List;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 import org.apache.commons.io.FileUtils;
 
 public class SearchEngine
 {
 
     public static void main(String... args)
-            throws InterruptedException
     {
 
         if ( args.length > 0 && args.length <= 2 )
@@ -44,44 +43,32 @@ public class SearchEngine
 
     }
 
-    protected static ArrayList<String> processFiles(String regex, String path)
-            throws InterruptedException
+    protected static List<String> processFiles(String regex, String path)
     {
-        var matchingFiles = new ConcurrentLinkedQueue<String>();
-
         File directory = new File(path);
         File[] listOfFiles = directory.listFiles((dir, name) -> name.endsWith(".txt"));
         var list = listOfFiles == null ? new ArrayList<File>() : Arrays.asList(listOfFiles);
-        var latch = new CountDownLatch(list.size());
 
-        list.parallelStream()
-                .forEach(file -> {
+        return list.parallelStream()
+                .filter(file -> {
                     try
                     {
                         String data = FileUtils.readFileToString(file, StandardCharsets.UTF_8);
                         var matcher = Pattern.compile(regex, Pattern.CASE_INSENSITIVE)
                                 .matcher(data);
 
-                        if ( matcher.find() )
-                        {
-                            matchingFiles.add(file.getName());
-                        }
+                        return matcher.find();
                     }
                     catch ( IOException e )
                     {
                         System.out.println("File: " + file.getName() + " cannot be read");
-
+                        return false;
                     }
+                })
+                .map(File::getName)
+                .sorted()
+                .collect(Collectors.toList());
 
-                    latch.countDown();
-                });
-
-        latch.await();
-
-        var l = new ArrayList<>(matchingFiles);
-
-        l.sort(String::compareTo);
-        return l;
     }
 
 }
